@@ -23,7 +23,9 @@ Route::post('/login', [LoginController::class, 'login'])->name('loginUser');
 Route::prefix('auth')->middleware('auth:sanctum')->group(function () {
 	Route::get('/user', [UserController::class, 'getUser'])->name('getUser');
 	Route::post('/logout', [UserController::class, 'logout'])->name('logout');
-	Route::prefix('survey')->group(function(){
-		Route::post('create',[SurveyController::class,'createSurvey'])->name('createSurvey');
+	Route::prefix('survey')->group(function () {
+		Route::post('/create', [SurveyController::class, 'createSurvey'])->name('createSurvey');
+		Route::get('/surveys', [SurveyController::class, 'getSurveys'])->name('getSurveys');
+		ROute::get('/survey/{id}', [SurveyController::class, 'getSurvey'])->name('getSurvey');
 	});
 });

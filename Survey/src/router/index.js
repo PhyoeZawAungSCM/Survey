@@ -7,7 +7,7 @@ import Login from "../views/Login.vue";
 import Dashboard from "../views/Dashboard.vue";
 import Survey from "../views/Survey.vue";
 import CreateSurvey from '../components/CreateSurvey.vue';
-
+import EditSurvey from '../components/EditSurvey.vue';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -31,6 +31,11 @@ const router = createRouter({
                   path:"/survey/create",
                   component:CreateSurvey,
                   name:'create-survey'
+                },
+                {
+                  path:'/survey/edit/:id',
+                  component:EditSurvey,
+                  name:'edit-survey'
                 }
             ],
         },

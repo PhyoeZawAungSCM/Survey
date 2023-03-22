@@ -1,7 +1,5 @@
 
 <script setup>
-import { useQuestionStore } from '../store/QuestionStore.js';
-import { ref,reactive } from 'vue';
 import Select from './InputType/Select.vue';
 import DeleteButton from './Buttons/DeleteButton.vue';
 const props = defineProps({

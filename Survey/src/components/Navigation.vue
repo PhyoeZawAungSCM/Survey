@@ -22,9 +22,10 @@ const USER_ACTION_BUTTONS = {
     action: "profile"
   }
 };
-
+const currentRoute = router.currentRoute.value.name;
+const currentRouteNav = currentRoute[0].toUpperCase() +currentRoute.substring(1,currentRoute.length);
 // isActive
-const isActive = ref('Dashboard');
+const isActive = ref(currentRouteNav);
 function changeNavActive(button) {
   console.log(button)
   router.push(NAV_BUTTONS[button].routerLink);

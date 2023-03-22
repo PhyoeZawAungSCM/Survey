@@ -16,12 +16,13 @@ const emit = defineEmits(['addOption', 'removeOption']);
         </div>
         <div class="items-center">
           <button class="bg-red-500 text-gray-200 px-4 py-1.5 rounded"
+            type="button"
             @click="emit('removeOption', index)">remove</button>
         </div>
       </div>
     </TransitionGroup>
     <div class="ml-8">
-      <button class="bg-gray-900 text-gray-200 px-4 py-2 rounded-md my-2" @click="emit('addOption')">Add Option</button>
+      <button type="button" class="bg-gray-900 text-gray-200 px-4 py-2 rounded-md my-2" @click="emit('addOption')">Add Option</button>
     </div>
 
   </div>

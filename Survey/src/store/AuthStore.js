@@ -69,13 +69,13 @@ export const useUserStore = defineStore("user", () => {
         httpAuth().post('/logout')
         .then(response => {
             AUTH_USER.token = null;
-            userData = {
-                name: "",
-                email: "",
-                password: "",
-                passwordConfirmation: "",
-                remember_me: false,
-            };
+        
+                userData.name= "",
+                userData.email= "",
+                userData.password= "",
+                userData.passwordConfirmation="",
+                userData.remember_me=false,
+         
             localStorage.removeItem('TOKEN');
             router.push('login');
         })
@@ -90,7 +90,12 @@ export const useUserStore = defineStore("user", () => {
         if(AUTH_USER.token){
             httpAuth().get('/user')
             .then(response => AUTH_USER.user = response.data.user)
-            .catch(error => console.log(error));
+            .catch(error => {  
+                AUTH_USER.token = null,
+                localStorage.removeItem('TOKEN');
+                console.log(error);
+                router.push('/login');
+            });
         }
     }
     /**
