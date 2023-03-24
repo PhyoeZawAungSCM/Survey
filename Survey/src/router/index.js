@@ -8,6 +8,8 @@ import Dashboard from "../views/Dashboard.vue";
 import Survey from "../views/Survey.vue";
 import CreateSurvey from '../components/CreateSurvey.vue';
 import EditSurvey from '../components/EditSurvey.vue';
+import SurveyAnswer from '../views/SurveyAnswer.vue';
+import AnswerList from '../views/AnswerList.vue';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -36,7 +38,13 @@ const router = createRouter({
                   path:'/survey/edit/:id',
                   component:EditSurvey,
                   name:'edit-survey'
+                },
+                {
+                  path:'/answer',
+                  component:AnswerList,
+                  name:'answer-list'
                 }
+              
             ],
         },
 
@@ -58,7 +66,11 @@ const router = createRouter({
                 },
             ],
         },
-      
+        {
+          path:'/survey/:slug',
+          component:SurveyAnswer,
+          name:'answer-servey',
+        }
     ],
     
 });

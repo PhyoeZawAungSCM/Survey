@@ -1,12 +1,19 @@
 <script setup>
 import { useSurveyStore } from '../store/SurveyStore';
 import { onMounted } from 'vue';
-import router from '../router';
+import { useRouter } from 'vue-router';
 import PrimaryButton from '../components/Buttons/PrimaryButton.vue';
 import HeaderBar from '../components/HeaderBar/HeaderBar.vue';
 import SurveyCard from '../components/SurveyCard.vue';
 import Loading from '../components/Loading/Loading.vue';
 const store = useSurveyStore();
+const router = useRouter();
+function deleteSurvey(id){
+  store.deleteSurvey(id);
+}
+function viewLink(slug){
+  router.push('/survey/'+slug);
+}
 onMounted(() => {
   console.log(store.surveys.data);
   if (store.surveys.data.length != 0) {
@@ -29,7 +36,11 @@ onMounted(() => {
         <span>You do not have any survey yet</span>
       </div>
       <div class="w-11/12 mx-auto flex flex-wrap gap-3 mt-3 justify-center">
-        <SurveyCard v-for="survey in store.getAllSurveys" :survey="survey"></SurveyCard>
+        <SurveyCard v-for="survey in store.getAllSurveys" 
+        @delete-survey="deleteSurvey"
+        @viewLink="viewLink"
+        :survey="survey"
+         ></SurveyCard>
       </div>
     </div>
   </div>

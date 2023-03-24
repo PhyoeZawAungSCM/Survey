@@ -12,6 +12,9 @@ const NAV_BUTTONS = {
   },
   Survey: {
     routerLink: '/survey'
+  },
+  Answer: {
+    routerLink: '/answer'
   }
 };
 const USER_ACTION_BUTTONS = {
@@ -23,7 +26,7 @@ const USER_ACTION_BUTTONS = {
   }
 };
 const currentRoute = router.currentRoute.value.name;
-const currentRouteNav = currentRoute[0].toUpperCase() +currentRoute.substring(1,currentRoute.length);
+const currentRouteNav = currentRoute[0].toUpperCase() + currentRoute.substring(1, currentRoute.length);
 // isActive
 const isActive = ref(currentRouteNav);
 function changeNavActive(button) {
@@ -52,28 +55,28 @@ function toggleUserActionActive(event) {
       <div>
         <button v-for="button in Object.keys(NAV_BUTTONS)" :key="button" @click="changeNavActive(button)"
           :class="button == isActive ? 'bg-gray-900 text-gray-200 font-medium' : ''" class="text-gray-300
-                            px-4 py-2 
-                          hover:bg-gray-700
-                            rounded-md
-                            mx-2
-                            transition
-                            ease-in-out
-                            duration-300
-                          ">{{ button }}</button>
+                              px-4 py-2 
+                            hover:bg-gray-700
+                              rounded-md
+                              mx-2
+                              transition
+                              ease-in-out
+                              duration-300
+                            ">{{ button }}</button>
       </div>
       <div>
         <button class="text-gray-300 py-2 " @click="toggleUserActionActive">{{ store.AUTH_USER.user.name }}</button>
         <Transition>
           <div v-if="isUserActionActive" ref="userActionButtons" class="bg-gray-50 absolute
-                      rounded shadow-md  
-                      w-48
-                      right-0 top-12
-                      ">
+                        rounded shadow-md  
+                        w-48
+                        right-0 top-12
+                        ">
             <button v-for="button in Object.keys(USER_ACTION_BUTTONS)" class="hover:bg-gray-300 
-                                text-gray-700
-                                w-full
-                                p-2
-                                rounded" @click="USER_ACTION_BUTTONS[button].action()">
+                                  text-gray-700
+                                  w-full
+                                  p-2
+                                  rounded" @click="USER_ACTION_BUTTONS[button].action()">
               {{ button }}
             </button>
           </div>

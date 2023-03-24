@@ -39,5 +39,17 @@ export const useSurveyStore = defineStore("survey", () => {
                 alert(error);
             });
     }
-    return { surveys, getSurveys, getAllSurveys, loading ,submitSurvey,isCreating};
+    /**
+     * to delete a survey
+     */
+    function deleteSurvey(id){
+        httpAuth().delete(`/survey/survey/${id}`)
+        .then(res => {
+            surveys.data = surveys.data.filter(survey =>{
+                return survey.id != res.data.survey.id;
+            });
+        })
+        .catch(error => alert(error))
+    }
+    return { surveys, getSurveys, getAllSurveys, loading ,submitSurvey,isCreating,deleteSurvey};
 });

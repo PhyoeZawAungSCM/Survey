@@ -19,6 +19,7 @@ class CreateSurveysTable extends Migration
             $table->string('description');
             $table->boolean('status');
             $table->string('image');
+            $table->string('slug'); // Field name same as your `saveSlugsTo`
             $table->foreignId('create_user_id')->constrained('users');
             $table->date('expire_date');
             $table->timestamps();

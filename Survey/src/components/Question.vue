@@ -13,6 +13,9 @@ const QUESTION_TYPE = ['text', 'select', 'radio', 'checkbox', 'textarea'];
 const optionType = ['radio','checkbox','select'];
 
 function addOption(){
+  if(props.question.data ==null){
+    props.question.data = [];
+  }
   props.question.data.push("");
 }
 function removeOption(index){

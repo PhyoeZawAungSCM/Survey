@@ -5,6 +5,7 @@ import router from '../router';
 const props = defineProps({
   survey:Object
 })
+const emit = defineEmits(['deleteSurvey','viewLink']);
 </script>
 <template>
   <div class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
@@ -21,8 +22,8 @@ const props = defineProps({
           <PrimaryButton @click="router.push(`/survey/edit/${survey.id}`)">Edit</PrimaryButton>
         </div>
         <div>
-          <PrimaryButton class="mr-2">View Survey</PrimaryButton>
-          <DeleteButton>Delete</DeleteButton>
+          <PrimaryButton class="mr-2" @click="emit('viewLink',survey.slug)">View Survey</PrimaryButton>
+          <DeleteButton @click="emit('deleteSurvey',survey.id)">Delete</DeleteButton>
         </div>
       </div>
     </div>

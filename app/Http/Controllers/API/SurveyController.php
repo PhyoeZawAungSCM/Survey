@@ -4,11 +4,18 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\CreateSurveyRequest;
+use App\Http\Requests\API\SubmitAnswerRequest;
+use App\Http\Requests\API\UpdateSurveyRequest;
+use App\Http\Resources\SurveyResource;
+use App\Models\Answer;
 use App\Models\Question;
+use App\Models\QuestionAnswer;
 use App\Models\survey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Throwable;
 
 class SurveyController extends Controller
 {
@@ -33,7 +40,7 @@ class SurveyController extends Controller
 					'survey_id'  => 'required|integer'
 				]);
 				$validated = $validator->validated();
-				$this->storeQuestion($validated);
+				self::storeQuestion($validated);
 			}
 			return $survey;
 		});
@@ -57,9 +64,7 @@ class SurveyController extends Controller
 
 	public function getSurveys(Request $request)
 	{
-		$user = $request->user();
-		$surveys = survey::where('create_user_id', $user->id)->get();
-
+		$surveys = $request->user()->survey;
 		return response()->json([
 			'message' => 'retriving message success',
 			'surveys' => $surveys,
@@ -69,28 +74,74 @@ class SurveyController extends Controller
 	public function getSurvey($id)
 	{
 		$survey = survey::find($id);
-		$questions = survey::find($id)->question;
-		$survey['questions'] = $questions;
-		foreach ($survey['questions'] as $question) {
-			$question['data'] = json_decode($question['data']);
-		}
-		return response()->json([
-			'survey' => $survey
-		], 200);
+		return new SurveyResource($survey);
 	}
 
-	public function updateSurvey($id, Request $request)
+	public function updateSurvey($id, UpdateSurveyRequest $request)
 	{
 		$survey = survey::find($id);
-        $questions = survey::find($id)->question;
-		$survey::update([
-			'title'       => $request->title,
-			'description' => $request->description,
-			'status'      => $request->status,
-			'expire_date' => $request->expire_date,
-			'image'       => 'hahaha',
-		]);
+		$questions = survey::find($id)->question()->pluck('id');
+		$requestQuestions = collect($request->questions)->pluck('id');
+		$toAdd = $requestQuestions->diff($questions);
+		$toDelete = $questions->diff($requestQuestions);
+		$toUpdate = $questions->diff($toDelete);
 
-        $request_question = $request->questions; 
+		// Log::info(print_r('to add' . $toAdd, true));
+		// Log::info(print_r('to delete' . $toDelete, true));
+		// Log::info(print_r('to update' . $toUpdate, true));
+		//delete a specific item from not being in request question
+		DB::beginTransaction();
+		try {
+			$survey->update([
+				'title'       => $request->title,
+				'description' => $request->description,
+				'status'      => $request->status,
+				'expire_date' => $request->expire_date,
+			]);
+			foreach ($toDelete as $delete) {
+				Log::info(print_r('delete' . $delete, true));
+				Question::find($delete)->delete();
+			}
+			foreach ($toAdd as $add) {
+				foreach ($request->questions as $question) {
+					if ($question['id'] == $add) {
+						$question['survey_id'] = $id;
+						$this->storeQuestion($question);
+					}
+				}
+			}
+
+			foreach ($toUpdate as $update) {
+				foreach ($request->questions as $question) {
+					if ($question['id'] == $update) {
+						Question::find($update)->update($question);
+					}
+				}
+			}
+		} catch(Throwable $th) {
+			DB::rollBack();
+			return response()->json([
+				'message' => 'some error occur in updating survey',
+				'error'   => $th->getMessage(),
+			]);
+		}
+		DB::commit();
+		return response()->json([
+			'message' => 'update survey success',
+			'survey'  => $survey
+		]);
 	}
+
+	public function deleteSurvey($id)
+	{
+		survey::find($id)->question()->delete();
+		$survey = survey::find($id);
+		$survey->delete();
+		return response()->json([
+			'message' => 'deleteSuccess',
+			'survey'  => $survey
+		]);
+	}
+
+	
 }

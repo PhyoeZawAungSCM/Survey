@@ -1,16 +1,18 @@
 <script setup>
 import { ref, reactive ,onMounted , watch } from "vue";
 import { v4 } from 'uuid';
+import { useSurveyStore } from "../store/SurveyStore";
+import { useRoute,useRouter } from "vue-router";
 import { httpAuth } from '../services/HTTPService'
 import Question from './Question.vue';
 import PrimaryButton from "./Buttons/PrimaryButton.vue";
-import Loading from "./Loading/Loading.vue";
 import HeaderBar from "./HeaderBar/HeaderBar.vue";
-import { useSurveyStore } from "../store/SurveyStore";
-import { useRoute } from "vue-router";
+import Loading from "./Loading/Loading.vue";
 
 const route = useRoute();
+const router = useRouter();
 const store = useSurveyStore();
+const loading = ref(false);
 const survey = reactive({
   data: {
     title: '',
@@ -29,6 +31,7 @@ function addQuestion() {
     type: "text",
     title: '',
     description: '',
+    survey_id:route.params.id,
     data: [],
   })
   survey.data.questions.push(question);
@@ -45,28 +48,51 @@ function deleteQuestion(id) {
 /**
  * submitting a question form
  */
-function submitSurvey() { 
-  store.submitSurvey(survey.data);
+function updateSurvey() { 
+  httpAuth().put('/survey/survey/' + survey.data.id , survey.data)
+  .then(response => {
+    console.log(response)
+    let surveyIndex = store.surveys.data.findIndex(survey => survey.id == response.data.survey.id);
+    store.surveys.data[surveyIndex]= response.data.survey;
+    router.push('/survey');
+  })
+  .catch(error => {
+    console.log(error)
+  })
 }
+/**
+ * changing the status
+ */
 const status = ref(survey.data.status == 0 ? false : true);
 watch(status,(status)=>{
     console.log(status);
     survey.data.status = status;
 })
+
+/**
+ * fetching a survey by id
+ */
 onMounted(()=>{
+  loading.value = true;
   httpAuth().get('/survey/survey/' + route.params.id)
   .then(response => {
-    survey.data = response.data.survey
+    survey.data = response.data.data
+    loading.value=false;
   })
   .catch(error => {
-    console.log(error);
+    loading.value = false;
+    alert(error);
   })
 })
 </script>
 <template>
-  <HeaderBar :title="survey.data.title"></HeaderBar>
-  <div class="bg-red mx-auto w-full">
-    <form class="bg-white my-4 w-3/4 rounded-lg mx-auto shadow-md p-8" @submit.prevent="submitSurvey">
+  <div v-if="loading" class="w-fit mx-auto mt-16">
+    <Loading :size=12 />
+  </div>
+  <div v-else>
+    <HeaderBar :title="survey.data.title"></HeaderBar>
+    <div class="bg-red mx-auto w-full">
+    <form class="bg-white my-4 w-3/4 rounded-lg mx-auto shadow-md p-8" @submit.prevent="updateSurvey">
       <!-- Title -->
       <div class="col-span-3 sm:col-span-2 mb-4">
         <label for="company-website" class="block text-sm font-medium leading-6 text-gray-900">Title</label>
@@ -120,5 +146,6 @@ onMounted(()=>{
       <PrimaryButton @click="addQuestion" buttonType="button">Create New question</PrimaryButton>
       <PrimaryButton buttonType="submit" :disabled="store.isCreating"><Loading v-if="store.isCreating"/>{{store.isCreating ? "Updating" : "Update"}}</PrimaryButton>  
     </form>
+  </div>
   </div>
 </template>
