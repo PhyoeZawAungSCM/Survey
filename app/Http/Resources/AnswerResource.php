@@ -11,15 +11,15 @@ class AnswerResource extends JsonResource
      *
      * @param  \Illuminate\Http\Request  $request
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
-     */
+     */ 
     public function toArray($request)
     {
         return [
             "id"=>$this->id,
-            "survey_id"=>$this->survey_id,
+            'question_id' => $this->question_id,
             "created_at"=>$this->created_at,
             "updated_at"=>$this->updated_at,
-            "pivot" =>PivotResource::collection($this->pivot)
+            'data'=>json_decode($this->data)
         ];
     }
 }

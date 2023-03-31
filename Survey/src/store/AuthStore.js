@@ -54,12 +54,13 @@ export const useUserStore = defineStore("user", () => {
                 AUTH_USER.token = response.data.token;
                 AUTH_USER.isLogin = true;
                 if (AUTH_USER.user != {} && AUTH_USER.isLogin && AUTH_USER.token) {
-                    localStorage.setItem("TOKEN",AUTH_USER.token)
-                    router.push("dashboard");
+                  localStorage.setItem("TOKEN",AUTH_USER.token)
                 }
             })
             .catch((error) => {
                 console.log(error);
+                errorData.error = error.response.data.message;
+                errorData.hasError = true;
             });
     }
     /**

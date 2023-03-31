@@ -3,11 +3,14 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\AnswerDetailResource;
 use App\Http\Resources\AnswerResource;
+use App\Http\Resources\QuestitonResource;
 use App\Models\Answer;
+use App\Models\QuestionAnswer;
+use App\Models\survey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ViewSurveyAnswersController extends Controller
 {
@@ -22,42 +25,53 @@ class ViewSurveyAnswersController extends Controller
 			$answerCount += $survey->answer()->count();
 		}
 		$user = $request->user();
-		$result = DB::table('answers')
+		$latestAnswer = DB::table('answers')
 			->join('surveys', 'surveys.id', '=', 'answers.survey_id')
 			->where('create_user_id', '=', $user->id)
+	  ->latest('answers.created_at')
+	  ->take(5)
 			->get();
 
 		return response()->json([
 			'latest_survey'  => $latestSurvey,
 			'survey_count'   => $surveyCount,
 			'answer_count'   => $answerCount,
-			'latest_answers' => $result,
+			'latest_answers' => $latestAnswer,
 		]);
 	}
 
-    public function getQuestionAndAnswer(Request $request,Answer $answer){
-        
-        // $haha = DB::table('question_answers')
-        // ->join('questions','questions.id','=','question_answers.question_id')
-        // ->join('answers','answers.id','=','question_answers.answer_id')
-        // ->join('surveys','surveys.id','=','answers.survey_id')
-        // ->get(['questions.id as question_id',
-        // 'answers.id as answer_id',
-        // 'question_answers.id as question_answer_id',
-        // 'question_answers.data as answer_data',
-        // 'questions.data as question_data',
-        // 'questions.title as question_title',
-        // 'questions.description as question_description',
-        // 'surveys.*']);
-        $haha = $answer->questions;
-        return AnswerResource::collection($haha);
-        // return response()->json([
-        //     'data'=>$haha
-        // ]);
-    //    if($user->id != $answer->survey->create_user_id){
-    //     return response()->json([
-    //         'message' => 'Unauthorize action'
-    //     ],422);
-      //  }
-    }
+	public function getQuestionAndAnswer(Request $request, Answer $answer)
+	{
+		$user = $request->user();
+		$surveys = survey::where('create_user_id', $user->id)->get();
+		foreach ($surveys as $survey) {
+			$survey['answers'] = Answer::where('survey_id', $survey->id)->get();
+		}
+		return response()->json([
+			'surveys' => $surveys,
+		]);
+	}
+
+	public function getSurveyWithAnswerId($id)
+	{
+		$survey = Answer::find($id)->survey;
+		$answer_detail = new AnswerDetailResource(Answer::find($id));
+		$questions = QuestitonResource::collection($survey->question);
+		$answers = [];
+		foreach ($questions as $question) {
+			$answer = QuestionAnswer::where('question_id', '=', $question['id'])
+			->where('answer_id', '=', $id)
+			->get()[0];
+			$answer['qeustion_id'] = $question['id'];
+			array_push(
+				$answers,
+				new AnswerResource($answer)
+			);
+		}
+		return response()->json([
+			'questions'=> $questions,
+			'answers'  => $answers,
+			'answer_detail' => $answer_detail,
+		]);
+	}
 }

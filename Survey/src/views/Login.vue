@@ -1,9 +1,12 @@
 <script setup>
 import { RouterLink } from 'vue-router';
 import { useUserStore } from '../store/AuthStore';
+import {watch} from 'vue';
 
 const store = useUserStore();
-
+watch(()=>[store.userData.email,store.userData.password],()=>{
+    store.errorData.hasError = false;
+  })
 </script>
 <template>
   <div class="flex min-h-full items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -21,6 +24,11 @@ const store = useUserStore();
       <form class="mt-8 space-y-6" @submit.prevent="store.login">
         <input type="hidden" name="remember" value="true" />
         <div class="-space-y-px rounded-md shadow-sm">
+          <Transition>
+          <div v-show="store.errorData.hasError" class="bg-red-500 w-full mb-3 rounded-md justify-center px-3 items-center">
+            <p class="text-gray-50 py-2">{{ store.errorData.error }}</p>
+          </div>
+          </Transition>
           <div>
             <label for="email-address" class="sr-only">Email address</label>
             <input id="email-address" name="email" type="email" autocomplete="email" required=""
@@ -58,5 +66,16 @@ const store = useUserStore();
         </div>
       </form>
   </div>
-</div></template>
+</div>
+</template>
+<style scoped>
+ .v-enter-from,
+ .v-leave-to{
+    transform: ScaleY(0);
+ }
+ .v-enter-active,
+ .v-leave-active{
+   transition: transform 0.3s ease-in-out;
+ }
+</style>
 

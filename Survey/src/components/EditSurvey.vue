@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive ,onMounted , watch } from "vue";
+import { ref, reactive ,onMounted , watch,computed } from "vue";
 import { v4 } from 'uuid';
 import { useSurveyStore } from "../store/SurveyStore";
 import { useRoute,useRouter } from "vue-router";
@@ -60,14 +60,6 @@ function updateSurvey() {
     console.log(error)
   })
 }
-/**
- * changing the status
- */
-const status = ref(survey.data.status == 0 ? false : true);
-watch(status,(status)=>{
-    console.log(status);
-    survey.data.status = status;
-})
 
 /**
  * fetching a survey by id
@@ -116,7 +108,7 @@ onMounted(()=>{
       <div class="mb-4">
         <label class="relative inline-flex items-center cursor-pointer">
           <span class=" font-medium text-gray-900 dark:text-gray-300 mr-4">Status</span>
-          <input type="checkbox" v-model="status" class="sr-only peer">
+          <input type="checkbox" v-model="survey.data.status" class="sr-only peer">
           <div
             class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
           </div>
@@ -143,8 +135,10 @@ onMounted(()=>{
           @deleteQuestion="deleteQuestion" />
       </div>
       <!--Questions-->
+      <div class="flex justify-end mt-4 gap-5">
       <PrimaryButton @click="addQuestion" buttonType="button">Create New question</PrimaryButton>
-      <PrimaryButton buttonType="submit" :disabled="store.isCreating"><Loading v-if="store.isCreating"/>{{store.isCreating ? "Updating" : "Update"}}</PrimaryButton>  
+      <PrimaryButton buttonType="submit" :disabled="store.isCreating"><Loading v-if="store.isCreating"/>{{store.isCreating ? "Updating" : "Update"}}</PrimaryButton> 
+      </div>
     </form>
   </div>
   </div>

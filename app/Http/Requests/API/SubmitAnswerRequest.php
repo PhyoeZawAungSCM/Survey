@@ -26,6 +26,7 @@ class SubmitAnswerRequest extends FormRequest
 		return [
 			'survey_id'     => 'required|integer|exists:surveys,id',
 			'answers'       => 'required|array',
+			'name'          => 'required|string',
 			'answers.*.id'  => 'required|integer|exists:questions,id',
 			'answers.*.data'=> 'required'
 		];

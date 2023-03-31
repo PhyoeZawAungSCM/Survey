@@ -13,8 +13,13 @@ use Throwable;
 
 class AnswerSurveyController extends Controller
 {
-    public function getSurveyBySlug(survey $survey)
+	public function getSurveyBySlug(survey $survey)
 	{
+		if ($survey->status == 0) {
+			return response()->json([
+				'message'=> 'Not found'
+			], 422);
+		}
 		return new	SurveyResource($survey);
 	}
 
@@ -24,12 +29,13 @@ class AnswerSurveyController extends Controller
 		try {
 			$answer = Answer::create([
 				'survey_id'=> $survey->id,
+				'name'     => $request->name,
 			]);
 			foreach ($request->answers as $answerReq) {
 				QuestionAnswer::create([
 					'question_id'=> $answerReq['id'],
 					'answer_id'  => $answer->id,
-					'data'      => json_encode($answerReq['data'])
+					'data'       => json_encode($answerReq['data'])
 				]);
 			}
 		} catch(Throwable $th) {

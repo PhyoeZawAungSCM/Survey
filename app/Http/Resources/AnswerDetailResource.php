@@ -2,10 +2,10 @@
 
 namespace App\Http\Resources;
 
-use App\Models\Question;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Date;
 
-class PivotResource extends JsonResource
+class AnswerDetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,8 +16,10 @@ class PivotResource extends JsonResource
     public function toArray($request)
     {
         return [
-                "question"=>new QuestitonResource(Question::find($this->question_id)),
-                "answer"=>json_decode($this->data),
+            'id'=>$this->id,
+            'created_at'=>$this->created_at->format('d/m/y H:i'),
+            'name'=>$this->name,
+            'survey_id'=>$this->survey_id,
         ];
     }
 }

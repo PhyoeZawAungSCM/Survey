@@ -85,11 +85,6 @@ class SurveyController extends Controller
 		$toAdd = $requestQuestions->diff($questions);
 		$toDelete = $questions->diff($requestQuestions);
 		$toUpdate = $questions->diff($toDelete);
-
-		// Log::info(print_r('to add' . $toAdd, true));
-		// Log::info(print_r('to delete' . $toDelete, true));
-		// Log::info(print_r('to update' . $toUpdate, true));
-		//delete a specific item from not being in request question
 		DB::beginTransaction();
 		try {
 			$survey->update([

@@ -10,6 +10,7 @@ import CreateSurvey from '../components/CreateSurvey.vue';
 import EditSurvey from '../components/EditSurvey.vue';
 import SurveyAnswer from '../views/SurveyAnswer.vue';
 import AnswerList from '../views/AnswerList.vue';
+import PageNotFound from '../views/PageNotFound.vue';
 const router = createRouter({
     history: createWebHistory(),
     routes: [
@@ -70,6 +71,11 @@ const router = createRouter({
           path:'/survey/:slug',
           component:SurveyAnswer,
           name:'answer-servey',
+        },
+        {
+          path:'/:pathMatch(.*)*',
+          name:'pagenotfound',
+          component:PageNotFound,
         }
     ],
     

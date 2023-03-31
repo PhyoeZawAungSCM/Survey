@@ -1,18 +1,19 @@
 <script setup>
 import { ref, reactive, onMounted, watch } from "vue";
-import { v4 } from 'uuid';
 import { useSurveyStore } from "../store/SurveyStore";
 import { useRoute, useRouter } from "vue-router";
 import { http } from '../services/HTTPService'
-import Question from '../components/Question.vue';
 import PrimaryButton from "../components/Buttons/PrimaryButton.vue";
-import HeaderBar from "../components/HeaderBar/HeaderBar.vue";
 import Loading from "../components/Loading/Loading.vue";
 
 const route = useRoute();
 const router = useRouter();
 const store = useSurveyStore();
+
+// loading 
 const loading = ref(false);
+
+// to submit survey data
 const survey = reactive({
   data: {
     title: '',
@@ -22,8 +23,17 @@ const survey = reactive({
     questions: []
   }
 })
+
+// store temporary answer data as id and key
 const answerModel = reactive({data:{}});
 
+// check for is submmitted data
+const isSubmitted = ref(false);
+
+const name = ref('');
+/**
+ * Submitting the answer 
+ */
 function submitAnswer(){
   const answers = [];
   const keys = Object.keys(answerModel.data);
@@ -32,10 +42,15 @@ function submitAnswer(){
     answers.push({id:key,data:answerModel.data[key]});
   })
   console.log(answers)
-  http().post(`/survey/${survey.data.id}/answer`,{survey_id:survey.data.id,answers:answers})
-  .then(response => console.log(response))
+  http().post(`/survey/${survey.data.id}/answer`,{survey_id:survey.data.id,name:name.value,answers:answers})
+  .then(response => {
+    console.log(response);
+    isSubmitted.value = true;
+  })
   .catch(error => console.log(error))
 }
+
+
 /**
  * fetching a survey by id
  */
@@ -44,6 +59,7 @@ onMounted(() => {
   http().get('/survey/' + route.params.slug)
     .then(response => {
       survey.data = response.data.data;
+      // store answerModel as question id and left data as empty
       survey.data.questions.forEach(question => {
         if(question.type == 'checkbox'){
           answerModel.data[question.id] = [];
@@ -56,13 +72,16 @@ onMounted(() => {
     })
     .catch(error => {
       loading.value = false;
-      alert(error);
+      router.push({name:'pagenotfound'});
     })
 })
 </script>
 <template>
   <div v-if="loading" class="w-fit mx-auto mt-16">
     <Loading :size=12 />
+  </div>
+  <div v-else-if="isSubmitted">
+    <h1>Thanks for answering the question</h1>
   </div>
   <div v-else>
     <div class="bg-red mx-auto w-full">
@@ -80,6 +99,12 @@ onMounted(() => {
         </div>
         <!-- Description -->
         <hr>
+        <p class="font-gray-900 mt-2 text-sm">Your name</p>
+        <div class="mt-2">
+            <input type="text"
+              v-model="name"
+              class="font-medium mt-2 block w-full rounded-md border-0 py-1.5 text-gray-800 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
+        </div>
         <!--Questions-->
         <div class="">
           <div v-for="(question, i) in survey.data.questions">

@@ -7,11 +7,9 @@ import PrimaryButton from "./Buttons/PrimaryButton.vue";
 import Loading from "./Loading/Loading.vue";
 import HeaderBar from "./HeaderBar/HeaderBar.vue";
 import { useSurveyStore } from "../store/SurveyStore";
-// const imageFile = ref(null);
-// function previewImage(event) {
-//   console.log(event.target.files[0]);
-// }
+
 const store = useSurveyStore();
+
 const survey = reactive({
   data: {
     title: '',
@@ -97,15 +95,17 @@ function submitSurvey() {
         <div class="flex justify-between items-center mb-2">
           <h3 class="block text-3xl font-medium leading-6 text-gray-900">Questions</h3>
         </div>
-        <div class="text-gray-900 font-medium items-center"><span class="text-gray-900 font-normal text-sm">you do not
+        <div v-if="survey.data.questions.length == 0" class="text-gray-900 font-medium items-center"><span class="text-gray-900 font-normal text-sm">you do not
             have any question created</span>
         </div>
         <Question v-for="(question, index) in survey.data.questions" :key="question" :question="question" :index="index"
           @deleteQuestion="deleteQuestion" />
       </div>
       <!--Questions-->
+      <div class="flex justify-end gap-5">
       <PrimaryButton @click="addQuestion" buttonType="button">Create New question</PrimaryButton>
       <PrimaryButton buttonType="submit" :disabled="store.isCreating"><Loading v-if="store.isCreating"/>{{store.isCreating ? "Creating" : "Create"}}</PrimaryButton>  
+    </div>
     </form>
   </div>
 </template>
