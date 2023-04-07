@@ -56,6 +56,7 @@ export const useUserStore = defineStore("user", () => {
                 if (AUTH_USER.user != {} && AUTH_USER.isLogin && AUTH_USER.token) {
                   localStorage.setItem("TOKEN",AUTH_USER.token)
                 }
+                router.push('/');   
             })
             .catch((error) => {
                 console.log(error);

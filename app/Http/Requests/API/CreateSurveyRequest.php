@@ -28,7 +28,8 @@ class CreateSurveyRequest extends FormRequest
 			'description'=> 'required|string',
 			'questions'  => 'required|array',
 			'status'     => 'required|boolean',
-			'expire_date'=> 'required|date'
+			'expire_date'=> 'required|date',
+			'image'      => 'required|image'
 		];
 	}
 }

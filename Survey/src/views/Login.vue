@@ -52,7 +52,7 @@ watch(()=>[store.userData.email,store.userData.password],()=>{
             <label for="remember-me" class="ml-2 block text-sm text-gray-900">Remember me</label>
           </div>
           <div class="text-sm">
-            <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
+            <!-- <a href="#" class="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a> -->
           </div>
         </div>
 

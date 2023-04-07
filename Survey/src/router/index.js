@@ -41,9 +41,9 @@ const router = createRouter({
                   name:'edit-survey'
                 },
                 {
-                  path:'/answer',
+                  path:'/answer/:id?',
                   component:AnswerList,
-                  name:'answer-list'
+                  name:'answer'
                 }
               
             ],

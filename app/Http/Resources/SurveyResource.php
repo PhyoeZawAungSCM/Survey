@@ -20,6 +20,7 @@ class SurveyResource extends JsonResource
             'description'=>$this->description,
             'status'=>$this->status,
             'expire_date'=>$this->expire_date,
+            'image'=>$this->image,
             'questions'=>SurveyQuestionResource::collection($this->question),
         ];
     }

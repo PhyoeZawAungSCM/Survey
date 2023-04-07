@@ -1,7 +1,9 @@
 
 <script setup>
+import { onMounted } from 'vue';
 import Select from './InputType/Select.vue';
 import DeleteButton from './Buttons/DeleteButton.vue';
+
 const props = defineProps({
   question:Object,
   index:Number,
@@ -12,12 +14,23 @@ const QUESTION_TYPE = ['text', 'select', 'radio', 'checkbox', 'textarea'];
 
 const optionType = ['radio','checkbox','select'];
 
+onMounted(() => {
+  props.question.description =  props.question.description == 'null' ? '' : props.question.description;
+})
+/**
+ * add option to question
+ */
 function addOption(){
   if(props.question.data ==null){
     props.question.data = [];
   }
   props.question.data.push("");
 }
+
+/**
+ * remove option form question
+ * @param {id} index 
+ */
 function removeOption(index){
   props.question.data.splice(index,1);
 }

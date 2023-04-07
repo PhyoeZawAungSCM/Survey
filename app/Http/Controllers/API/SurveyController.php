@@ -4,16 +4,14 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\CreateSurveyRequest;
-use App\Http\Requests\API\SubmitAnswerRequest;
 use App\Http\Requests\API\UpdateSurveyRequest;
 use App\Http\Resources\SurveyResource;
-use App\Models\Answer;
 use App\Models\Question;
-use App\Models\QuestionAnswer;
 use App\Models\survey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Throwable;
 
@@ -21,14 +19,15 @@ class SurveyController extends Controller
 {
 	public function createSurvey(CreateSurveyRequest $createSurveyRequest)
 	{
-		$survey = DB::transaction(function () use ($createSurveyRequest) {
+		$path = $createSurveyRequest->file('image')->store('surveys');
+		$survey = DB::transaction(function () use ($createSurveyRequest, $path) {
 			$survey = survey::create([
 				'title'         => $createSurveyRequest->title,
 				'description'   => $createSurveyRequest->description,
 				'status'        => $createSurveyRequest->status,
 				'create_user_id'=> $createSurveyRequest->user()->id,
 				'expire_date'   => $createSurveyRequest->expire_date,
-				'image'         => 'hahaha'
+				'image'         => $path,
 			]);
 			foreach ($createSurveyRequest->questions as $question) {
 				$question['survey_id'] = $survey->id;
@@ -80,6 +79,11 @@ class SurveyController extends Controller
 	public function updateSurvey($id, UpdateSurveyRequest $request)
 	{
 		$survey = survey::find($id);
+		$oldPath = $survey->image;
+		if ($request->hasFile('image')) {
+			Storage::delete($oldPath);
+			$newPath = $request->file('image')->store('surveys');
+		}
 		$questions = survey::find($id)->question()->pluck('id');
 		$requestQuestions = collect($request->questions)->pluck('id');
 		$toAdd = $requestQuestions->diff($questions);
@@ -92,6 +96,7 @@ class SurveyController extends Controller
 				'description' => $request->description,
 				'status'      => $request->status,
 				'expire_date' => $request->expire_date,
+				'image'       => $newPath ?? $oldPath
 			]);
 			foreach ($toDelete as $delete) {
 				Log::info(print_r('delete' . $delete, true));
@@ -137,6 +142,4 @@ class SurveyController extends Controller
 			'survey'  => $survey
 		]);
 	}
-
-	
 }

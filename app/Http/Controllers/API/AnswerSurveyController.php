@@ -8,6 +8,7 @@ use App\Http\Resources\SurveyResource;
 use App\Models\Answer;
 use App\Models\QuestionAnswer;
 use App\Models\survey;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -15,9 +16,15 @@ class AnswerSurveyController extends Controller
 {
 	public function getSurveyBySlug(survey $survey)
 	{
+		$currentDate = Carbon::now();
+		if ($survey->expire_date < $currentDate) {
+			return response()->json([
+				'message'=> 'Expire'
+			], 422);
+		}
 		if ($survey->status == 0) {
 			return response()->json([
-				'message'=> 'Not found'
+				'message'=> 'Survey is not active'
 			], 422);
 		}
 		return new	SurveyResource($survey);

@@ -11,6 +11,7 @@ use App\Models\QuestionAnswer;
 use App\Models\survey;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ViewSurveyAnswersController extends Controller
 {
@@ -27,10 +28,10 @@ class ViewSurveyAnswersController extends Controller
 		$user = $request->user();
 		$latestAnswer = DB::table('answers')
 			->join('surveys', 'surveys.id', '=', 'answers.survey_id')
-			->where('create_user_id', '=', $user->id)
-	  ->latest('answers.created_at')
-	  ->take(5)
-			->get();
+			 ->where('create_user_id', '=', $user->id)
+	  	 ->latest('answers.created_at')
+	  	 ->take(5)
+			 ->get(['answers.id','surveys.title','surveys.description','answers.created_at']);
 
 		return response()->json([
 			'latest_survey'  => $latestSurvey,
@@ -61,16 +62,20 @@ class ViewSurveyAnswersController extends Controller
 		foreach ($questions as $question) {
 			$answer = QuestionAnswer::where('question_id', '=', $question['id'])
 			->where('answer_id', '=', $id)
-			->get()[0];
-			$answer['qeustion_id'] = $question['id'];
-			array_push(
-				$answers,
-				new AnswerResource($answer)
-			);
+			->get();
+			$answer = collect($answer);
+			if (!$answer->isEmpty()) {
+				Log::info($answer);
+				$answer[0]['qeustion_id'] = $question['id'];
+				array_push(
+					$answers,
+					new AnswerResource($answer[0])
+				);
+			}
 		}
 		return response()->json([
-			'questions'=> $questions,
-			'answers'  => $answers,
+			'questions'     => $questions,
+			'answers'       => $answers,
 			'answer_detail' => $answer_detail,
 		]);
 	}
