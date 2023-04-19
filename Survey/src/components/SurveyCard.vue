@@ -3,7 +3,11 @@ import PrimaryButton from './Buttons/PrimaryButton.vue';
 import DeleteButton from './Buttons/DeleteButton.vue';
 import router from '../router';
 const props = defineProps({
-  survey:Object
+  survey:Object,
+  removeDelete:{
+    type:Boolean,
+    default:false
+  }
 })
 const emit = defineEmits(['deleteSurvey','viewLink']);
 </script>
@@ -25,7 +29,7 @@ const emit = defineEmits(['deleteSurvey','viewLink']);
         </div>
         <div>
           <PrimaryButton class="mr-2" @click="emit('viewLink',survey.slug)">View Survey</PrimaryButton>
-          <DeleteButton @click="emit('deleteSurvey',survey.id)">Delete</DeleteButton>
+          <DeleteButton v-if="!removeDelete" @click="emit('deleteSurvey',survey.id)">Delete</DeleteButton>
         </div>
       </div>
     </div>

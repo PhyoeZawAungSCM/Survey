@@ -43,11 +43,12 @@ function onEnter(el,done){
 }
 
 function onLeave(el,done){
+  console.log("Leaving");
   gsap.to(el,{
     opacity:0,
     translateY:20,
-    delay:150,
-    onComplete:done
+    delay:0.15,
+    onComplete:done,
   });
 }
 /**
@@ -78,6 +79,7 @@ onMounted(() => {
         @before-enter="onBeforeEnter"
         @enter="onEnter"
         @leave="onLeave"
+        @after-leave="onAfterLeave"
         :css="false"
         appear
         >

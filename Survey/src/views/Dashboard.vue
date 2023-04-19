@@ -75,6 +75,7 @@ watch(loadAnswerCount , () => {
       <SurveyCard v-if="data.data.latest_survey" 
         @delete-survey="deleteSurvey"
         @viewLink="viewLink"
+        removeDelete
         :survey="data.data.latest_survey" />
       <div v-else class="w-full bg-white shadow-md rounded-lg flex items-center justify-center">
         <span>You do not have any survey yet . </span>
@@ -99,7 +100,7 @@ watch(loadAnswerCount , () => {
       </div>
       <Transition>
       <div v-if="loadLatestSurvey" class=" w-full bg-white shadow-md rounded-lg px-6 ">
-        <h1 class="font-bold text-2xl text-gray-900 pt-4 mb-4">Latest Surveys</h1>
+        <h1 class="font-bold text-2xl text-gray-900 pt-4 mb-4">Latest Answers</h1>
         <div v-for="answer in data.data.latest_answers" 
         @click="goToAnswer(answer)"
         class="pl-2 cursor-pointer pb-2 border-b-[1px] hover:bg-gray-200">
