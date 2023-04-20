@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, watch,onMounted } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { http } from '../services/HTTPService';
 import SideBar from '../components/SideBar.vue'
 import { useRoute,useRouter } from 'vue-router';
@@ -122,7 +122,6 @@ function removeNewButton() {
  * watch the answer and create buttons based on this
  */
 watch(answers, () => {
-  console.log("Enter watch")
   let idList = [];
   // getting all the keys from answers
   let keys = Object.keys(answers.value);
@@ -142,7 +141,6 @@ watch(answers, () => {
     })
   }
   answerButtonList.value = idList;
-  console.log(idList)
 })
 </script> 
 <template>

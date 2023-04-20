@@ -15,7 +15,6 @@ export const http = () => {
  */
 export const httpAuth = () => {
   const store = useUserStore();
-  console.log(store.AUTH_USER.token)
   return axios.create({
     baseURL:'http://127.0.0.1:8000/api/auth',
     headers:{

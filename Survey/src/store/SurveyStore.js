@@ -50,7 +50,6 @@ export const useSurveyStore = defineStore("survey", () => {
                             );
                         }
                     } else {
-                        console.log("Else condition");
                         formData.append(`questions[${i}][${key}][0]`, null);
                     }
                 } else {

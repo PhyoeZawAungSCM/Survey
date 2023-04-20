@@ -26,7 +26,6 @@ const survey = reactive({
 });
 const today = new Date();
 const formatedToday = formatDate(today);
-console.log(formatedToday)
 /**
  * Adding a question to survey
  */
@@ -80,7 +79,6 @@ function updateSurvey() {
     }
   })
     .then(response => {
-      console.log(response)
       let surveyIndex = store.surveys.data.findIndex(survey => survey.id == response.data.survey.id);
       store.surveys.data[surveyIndex] = response.data.survey;
       router.push('/survey');

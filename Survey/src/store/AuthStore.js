@@ -28,7 +28,6 @@ export const useUserStore = defineStore("user", () => {
                 password_confirmation: userData.passwordConfirmation,
             })
             .then((response) => {
-                console.log(response);
                 AUTH_USER.user = response.data;
                 router.push("login");
             })
@@ -59,7 +58,6 @@ export const useUserStore = defineStore("user", () => {
                 router.push('/');   
             })
             .catch((error) => {
-                console.log(error);
                 errorData.error = error.response.data.message;
                 errorData.hasError = true;
             });
@@ -82,7 +80,6 @@ export const useUserStore = defineStore("user", () => {
             router.push('login');
         })
         .catch(error => {
-            console.log(error);
         })
     }
     /**
@@ -95,7 +92,6 @@ export const useUserStore = defineStore("user", () => {
             .catch(error => {  
                 AUTH_USER.token = null,
                 localStorage.removeItem('TOKEN');
-                console.log(error);
                 router.push('/login');
             });
         }

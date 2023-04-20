@@ -39,14 +39,11 @@ const name = ref('');
 function submitAnswer() {
   const answers = [];
   const keys = Object.keys(answerModel.data);
-  console.log(keys)
   keys.forEach((key) => {
     answers.push({ id: key, data: answerModel.data[key] });
   })
-  console.log(answers)
   http().post(`/survey/${survey.data.id}/answer`, { survey_id: survey.data.id, name: name.value, answers: answers })
     .then(response => {
-      console.log(response);
       isSubmitted.value = true;
       notify({
         title: "Your answer is recorded",

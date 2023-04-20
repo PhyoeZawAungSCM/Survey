@@ -26,9 +26,7 @@ onMounted(async () => {
 })
 
 function onEnter(el, done) {
-  console.log(el.dataset.index);
   let duration = el.dataset.index * 150;
-  console.log(duration);
   el.classList.add('transition-all', `duration-${duration}`, 'ease-in-out')
 }
 const hasNotSurvey = computed(() => {

@@ -37,7 +37,6 @@ onMounted(() => {
   httpAuth().get('/survey/dashboard-data')
     .then(response => {
       data.data = response.data;
-      console.log(response);
       loading.value = false
       setTimeout(()=>{
         load_card.value = true;
